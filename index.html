@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>حواس جمع !</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Lalezar', system-ui, sans-serif;
+      min-height:100vh;
+      background:#000 url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80') center/cover no-repeat fixed;
+      color:#fff;
+      overflow:hidden;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      touch-action:manipulation;
+    }
+    body::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,0.5);
+      z-index:1;
+    }
+    .glass {
+      background:rgba(255,255,255,0.06);
+      backdrop-filter:blur(18px) saturate(200%);
+      -webkit-backdrop-filter:blur(18px) saturate(200%);
+      border:1px solid rgba(255,255,255,0.1);
+      border-radius:28px;
+      box-shadow:0 10px 40px rgba(0,0,0,0.4);
+      overflow:hidden;
+      transition:all 0.3s ease;
+    }
+    .glass:hover {
+      border-color:rgba(255,152,0,0.35);
+      box-shadow:0 15px 50px rgba(255,152,0,0.2);
+    }
+    header {
+      position:fixed;
+      top:16px;
+      width:90%;
+      max-width:420px;
+      z-index:20;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:1.1rem;
+      padding:10px 16px;
+    }
+    main {
+      position:relative;
+      z-index:10;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      width:90%;
+      max-width:420px;
+      padding:80px 0 100px;
+      gap:1.8rem;
+    }
+    .logo {
+      font-size:4.5rem;
+      color:#ff9800;
+      text-shadow:0 0 30px rgba(255,152,0,0.7);
+      letter-spacing:-1px;
+      user-select:none;
+    }
+    .eye-container {
+      position:relative;
+      width:160px;
+      height:80px;
+      margin-bottom:-30px;
+    }
+    .eye {
+      position:absolute;
+      width:70px;
+      height:70px;
+      background:rgba(0,0,0,0.75);
+      border:5px solid #222;
+      border-radius:50%;
+      overflow:hidden;
+      top:5px;
+    }
+    .eye.left  { left:0; }
+    .eye.right { right:0; }
+    .pupil {
+      width:32px;
+      height:32px;
+      background:radial-gradient(circle at 30% 30%, #ff9800, #e65100);
+      border-radius:50%;
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      box-shadow:inset 0 0 12px rgba(0,0,0,0.5);
+      transition:transform 0.18s ease-out;
+    }
+    .search-container {
+      position:relative;
+      width:100%;
+      height:64px;
+    }
+    input[type="text"] {
+      width:100%;
+      height:100%;
+      padding:0 70px;
+      font-size:1.25rem;
+      color:white;
+      background:transparent;
+      border:none;
+      outline:none;
+      text-align:center;
+      font-family:'Lalezar',sans-serif;
+    }
+    input::placeholder {
+      color:rgba(255,255,255,0.5);
+      font-family:'Lalezar',sans-serif;
+    }
+    .icon {
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:28px;
+      height:28px;
+      pointer-events:none;
+    }
+    .google-icon { left:20px; fill:#4285f4; opacity:0.85; }
+    .search-icon { right:20px; fill:#9aa0a6; }
+    input:focus ~ .search-icon { fill:#ff9800; }
+    .particles {
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:5;
+    }
+    .particle {
+      position:absolute;
+      bottom:-20px;
+      width:3px;
+      height:3px;
+      background:#ff9800;
+      border-radius:50%;
+      box-shadow:0 0 10px #ff9800;
+      opacity:0;
+      animation:rise linear infinite;
+    }
+    @keyframes rise {
+      0% { transform:translateY(0) scale(0.5); opacity:0; }
+      10% { opacity:0.8; }
+      100% { transform:translateY(-130vh) scale(0.2); opacity:0; }
+    }
+    .bookmarks-section {
+      width:100%;
+      text-align:center;
+    }
+    .bookmarks {
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:16px;
+      width:100%;
+      padding:0 10px;
+      max-height:140px;
+      overflow-y:auto;
+    }
+    .bookmark {
+      width:80px;
+      text-align:center;
+      color:#ddd;
+      font-size:0.9rem;
+      cursor:pointer;
+    }
+    .bookmark-icon {
+      width:48px;
+      height:48px;
+      margin:0 auto 6px;
+      background:rgba(255,255,255,0.1);
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.8rem;
+      backdrop-filter:blur(8px);
+    }
+    .add-btn {
+      width:56px;
+      height:56px;
+      background:rgba(255,152,0,0.25);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:2rem;
+      color:#ff9800;
+      border:2px solid rgba(255,152,0,0.4);
+      cursor:pointer;
+      margin:12px auto 0;
+    }
+    .separator {
+      width:80%;
+      height:1px;
+      background:rgba(255,255,255,0.15);
+      margin:20px auto 0;
+    }
+    footer {
+      position:fixed;
+      bottom:12px;
+      font-size:0.9rem;
+      color:rgba(255,255,255,0.5);
+      text-align:center;
+      width:100%;
+      z-index:5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="particles" id="particles"></div>
+
+  <header class="glass">
+    <div id="date"></div>
+    <div>حواس جمع</div>
+  </header>
+
+  <main>
+    <div class="eye-container">
+      <div class="eye left"><div class="pupil"></div></div>
+      <div class="eye right"><div class="pupil"></div></div>
+    </div>
+
+    <div class="logo">حواس جمع !</div>
+
+    <div class="search-container glass">
+      <svg class="icon google-icon" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12.545 10.239v3.821h5.445c-.49 2.531-2.867 4.233-5.445 4.233-3.28 0-5.94-2.695-5.94-6 0-3.306 2.66-6 5.94-6 1.68 0 3.19.615 4.35 1.63l2.96-2.96C17.385 2.995 15.065 2 12.545 2 7.021 2 2.545 6.477 2.545 12s4.476 10 10 10c5.523 0 10-4.477 10-10 0-.67-.068-1.326-.196-1.961h-9.804z"/>
+      </svg>
+      <input type="text" placeholder="تو حواس جمع سرچ کن..." id="searchInput" autofocus />
+      <svg class="icon search-icon" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      </svg>
+    </div>
+
+    <div class="bookmarks-section">
+      <div class="bookmarks" id="bookmarksList"></div>
+      <div class="add-btn" id="addBookmark">+</div>
+      <div class="separator"></div>
+    </div>
+  </main>
+
+  <footer>ساخته شده توسط استودیو هوش مصنوعی استار</footer>
+
+  <script>
+    // ستاره‌ها
+    const particlesContainer = document.getElementById('particles');
+    function createParticle() {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (Math.random() * 7 + 6) + 's';
+      particlesContainer.appendChild(p);
+      setTimeout(() => p.remove(), 14000);
+    }
+    setInterval(createParticle, 350);
+
+    // تاریخ
+    function updateDate() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('date').textContent = now.toLocaleDateString('fa-IR', options);
+    }
+    updateDate();
+
+    // چشم دنبال موس/لمس
+    const pupils = document.querySelectorAll('.pupil');
+    const maxMove = 18;
+    function movePupils(e) {
+      const clientX = e.clientX || (e.touches && e.touches[0]?.clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0]?.clientY);
+      document.querySelectorAll('.eye').forEach((eye, i) => {
+        const rect = eye.getBoundingClientRect();
+        const eyeX = rect.left + rect.width / 2;
+        const eyeY = rect.top + rect.height / 2;
+        const deltaX = clientX - eyeX;
+        const deltaY = clientY - eyeY;
+        const angle = Math.atan2(deltaY, deltaX);
+        const dist = Math.min(maxMove, Math.hypot(deltaX, deltaY) / 10);
+        const moveX = Math.cos(angle) * dist;
+        const moveY = Math.sin(angle) * dist;
+        pupils[i].style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+      });
+    }
+    window.addEventListener('mousemove', movePupils);
+    window.addEventListener('touchmove', movePupils, { passive: true });
+
+    // سرچ به گوگل
+    document.getElementById('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const q = e.target.value.trim();
+        if (q) window.location.href = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+      }
+    });
+
+    // بوکمارک‌ها
+    const bookmarksList = document.getElementById('bookmarksList');
+    const addBtn = document.getElementById('addBookmark');
+    let bookmarks = [];
+
+    try {
+      const saved = localStorage.getItem('bookmarks');
+      if (saved) bookmarks = JSON.parse(saved);
+    } catch (err) {
+      console.warn("localStorage در دسترس نیست:", err.message);
+    }
+
+    function renderBookmarks() {
+      bookmarksList.innerHTML = '';
+      bookmarks.forEach(bm => {
+        const div = document.createElement('div');
+        div.className = 'bookmark';
+        div.innerHTML = `<div class="bookmark-icon">${bm.icon || '⭐'}</div><div>${bm.name}</div>`;
+        div.onclick = () => window.open(bm.url, '_blank');
+        bookmarksList.appendChild(div);
+      });
+    }
+    renderBookmarks();
+
+    // اضافه کردن بوکمارک جدید (بدون prompt - فعلاً غیرفعال - اگر خواستی دوباره فعال کن)
+    addBtn.onclick = () => {
+      alert("در این نسخه اضافه کردن بوکمارک غیرفعال است.\nبرای فعال‌سازی دوباره بگو تا کد رو برگردونم.");
+      // اگر بعداً خواستی prompt برگرده، این قسمت رو uncomment کن:
+      /*
+      const name = prompt('نام سایت یا لینک مورد علاقه:')?.trim();
+      if (!name) return;
+      const url = prompt('آدرس کامل لینک[](https://...):')?.trim();
+      if (!url) return;
+      const icon = prompt('ایموجی یا علامت دلخواه (اختیاری):')?.trim() || '⭐';
+      bookmarks.push({ name, url, icon });
+      try { localStorage.setItem('bookmarks', JSON.stringify(bookmarks)); } catch {}
+      renderBookmarks();
+      */
+    };
+  </script>
+
+</body>
+</html>
